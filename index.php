@@ -88,8 +88,9 @@
                         <input type="checkbox" name="rememberMe" id="login-check">
                         <label for="login-check">Remember Me</label>
                     </div>
+                    <!-- YOU NEED TO DO THIS! -->
                     <div class="two">
-                        <label><a href="#">Forget password?</a></label>
+                        <label><a href="forgot_password.php">Forget password?</a></label>
                     </div>
                 </div>
             </form>
