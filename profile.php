@@ -19,28 +19,6 @@
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
-
-    // Fetch current and past reservations
-    $current_reservations_sql = "SELECT er.title, er.date, er.time, v.name AS venue 
-                                FROM event_reservations er 
-                                JOIN event_venue ev ON er.id = ev.event_id 
-                                JOIN venues v ON ev.venue_id = v.id 
-                                WHERE er.organizer_id = ? AND er.date >= CURDATE()";
-    $past_reservations_sql = "SELECT er.title, er.date, er.time, v.name AS venue 
-                            FROM event_reservations er 
-                            JOIN event_venue ev ON er.id = ev.event_id 
-                            JOIN venues v ON ev.venue_id = v.id 
-                            WHERE er.organizer_id = ? AND er.date < CURDATE()";
-
-    $current_stmt = $conn->prepare($current_reservations_sql);
-    $current_stmt->bind_param("i", $user_id);
-    $current_stmt->execute();
-    $current_reservations_result = $current_stmt->get_result();
-
-    $past_stmt = $conn->prepare($past_reservations_sql);
-    $past_stmt->bind_param("i", $user_id);
-    $past_stmt->execute();
-    $past_reservations_result = $past_stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -52,11 +30,90 @@
     <title>User Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f1f1; /* light peach background */
+        }
+
+        .card-header {
+            background-color: #f28e76; /* peach */
+            color: white;
+        }
+
+        .card-header h4{
+            color: white;
+        }
+
+        .nav-tabs .nav-link {
+            color: #333; /* black */
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #f28e76; /* peach */
+            background-color: white;
+            border-color: #f28e76;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #f28e76; /* peach */
+        }
+
         .profile-img {
             width: 120px;
             height: 120px;
             object-fit: cover;
             border-radius: 50%;
+        }
+
+        .btn-primary {
+            background-color: #f28e76; /* peach */
+            border-color: #f28e76; /* peach */
+        }
+
+        .btn-primary:hover {
+            background-color: #f7a693; /* darker peach */
+            border-color: #f7a693; /* darker peach */
+        }
+
+        .form-control {
+            border-color: #f28e76; /* peach */
+        }
+
+        .form-control:focus {
+            border-color: #f7a693; /* darker peach */
+            box-shadow: none;
+        }
+
+        h4 {
+            color: #333; /* black */
+        }
+
+        .card {
+            background-color: white;
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            background-color: white;
+        }
+
+        .container {
+            margin-top: 50px;
+            max-width: 75%px;
+        }
+
+        p {
+            color: #333; /* black */
+        }
+
+        .nav-tabs {
+            border-bottom: 1px solid #f28e76; /* peach */
+        }
+
+        .tab-content {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -64,16 +121,13 @@
 <body>
     <div class="container py-4">
         <div class="card">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header">
                 <h4 class="font-weight-bold mb-0">Account Settings</h4>
             </div>
             <div class="card-body">
                 <ul class="nav nav-tabs mb-4">
                     <li class="nav-item">
                         <a class="nav-link active" data-toggle="tab" href="#profile">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#reservations">Reservations</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#password">Change Password</a>
@@ -109,35 +163,6 @@
                                     <button type="submit" class="btn btn-primary">Save Changes</button>
                                     <a href="index.php" class="btn btn-primary">Go Back</a>
                                 </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane fade" id="reservations">
-                        <div class="col-md-12 mx-auto">
-                            <h4>Current Reservations</h4>
-                            <div id="current-reservations">
-                                <?php
-                                if ($current_reservations_result->num_rows > 0) {
-                                    while ($reservation = $current_reservations_result->fetch_assoc()) {
-                                        echo "<p>" . htmlspecialchars($reservation['title']) . " at " . htmlspecialchars($reservation['venue']) . " on " . htmlspecialchars($reservation['date']) . " at " . htmlspecialchars($reservation['time']) . "</p>";
-                                    }
-                                } else {
-                                    echo "<p>No current reservations.</p>";
-                                }
-                                ?>
-                            </div>
-                            <h4 class="mt-4">Past Reservations</h4>
-                            <div id="past-reservations">
-                                <?php
-                                if ($past_reservations_result->num_rows > 0) {
-                                    while ($reservation = $past_reservations_result->fetch_assoc()) {
-                                        echo "<p>" . htmlspecialchars($reservation['title']) . " at " . htmlspecialchars($reservation['venue']) . " on " . htmlspecialchars($reservation['date']) . " at " . htmlspecialchars($reservation['time']) . "</p>";
-                                    }
-                                } else {
-                                    echo "<p>No past reservations.</p>";
-                                }
-                                ?>
                             </div>
                         </div>
                     </div>

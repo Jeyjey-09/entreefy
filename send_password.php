@@ -29,12 +29,14 @@
 
         try{
             $mail->send();
+            header("Location: forgot_password.php?success=1");
+            exit();
         } catch (Exception $e){
             echo "Error: " . $mail->ErrorInfo;
         }
     }
 
-    echo "Check your email for password reset link";
+    header("Location: index.php");
 
     $stmt->close();
     $conn->close();

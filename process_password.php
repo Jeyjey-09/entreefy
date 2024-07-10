@@ -41,5 +41,5 @@
     $stmt->bind_param('si', $password, $user['user_id']);
     $stmt->execute();
 
-    echo "Password reset successfully";
+    echo '<script>alert("Password reset successfully, You can close this tab.")</script>'; 
 ?>

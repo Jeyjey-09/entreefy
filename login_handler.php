@@ -39,7 +39,10 @@
                 echo "Invalid password!";
             }
         } else {
-            echo "No user found with this identifier!";
+            echo '<script>
+            alert("No user found with this identifier!");
+            window.location.href = "index.php";
+            </script>';
         }
 
         $conn->close();
